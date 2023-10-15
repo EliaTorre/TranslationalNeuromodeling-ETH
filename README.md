@@ -1,5 +1,5 @@
 <h1 align="center">
-Translational Neuromodeling - Project</h1>
+Translational Neuromodeling - ETH - Course Project</h1>
 
 <div align="center">
   <a href="https://www.linkedin.com/in/eliatorre/">Elia Torre</a>,
