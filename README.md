@@ -59,19 +59,19 @@ The first modeling technique is a naive classification approach meant to give a 
 4. Finally, the data set is reshaped to 149 subjects, 17514 features.
 
 This data set is then used to predict the drug (or placebo) given to every subject. In particular, we employed four machine learning models:
-1. K-Nearest Neighbors (KNN)
-2. Random Forest (RF)
-3. Support Vector Machine (SVM)
-4. AdaBoost (ADB)
+1. **K-Nearest Neighbors (KNN)**
+2. **Random Forest (RF)**
+3. **Support Vector Machine (SVM)**
+4. **AdaBoost (ADB)**
 
 Following (Schöbi et al., 2021), we ensured the validity of our models performances by comparison with the performance of 30 models trained under label permutations in a 10-fold cross-validation setting. For each classification, the best performing model has been cho- sen, a Gaussian curve has been fitted to the histograms of accuracies and the p-value estimated. In particular, we performed the following binary and multi-class classifications:
-1. Galantamine vs Placebo
-2. Amisulpride vs Placebo
-3. Levodopa vs Placebo
-4. Biperiden vs Placebo
-5. Biperiden vs Galantamine
-6. Amisulpride vs Levodopa
-7. All Drugs + Placebo
+1. **Galantamine vs Placebo**
+2. **Amisulpride vs Placebo**
+3. **Levodopa vs Placebo**
+4. **Biperiden vs Placebo**
+5. **Biperiden vs Galantamine**
+6. **Amisulpride vs Levodopa**
+7. **All Drugs + Placebo**
 
 The results are shown in the table below: 
 
