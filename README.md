@@ -111,7 +111,7 @@ The reason we choose exactly those cortical-column models was as follows. The ER
 The evaluation scheme is consistent with the previously described one. The results are shown in the table below:
 
 <div align="center">
-<img src="Img/DCM.png" alt="DCM" width="40%">
+<img src="Img/DCM.png" alt="DCM" width="60%">
 </div>
 
 We evaluated the cross-validated drug label prediction accuracy of most of the 3∗3∗3∗2 = 54 combinations of mean trial definitions (StdVs- Dev/StdVsDevStb/ExtStdVsDev), cortical column models (ERP/CMC/NMDA), connection models (Garrido2008/Ranlund2016/David2006) and classifiers (RF/SVM). We don’t report results for the 8 models StdVsDevStb/ExtStdVsDev + CMC/NMDA + David2006 + RF/SVM because the model inversion was not finished on time for the report deadline. We reached classification accuracies that are significantly better than chance (permutation test p-value pPT < 0.05 for all binary classification task but not for the 5 class task. There was no model that performed well at all classification task. The model with the highest cumulative accuracy (summed accuracy of all 7 classification task) was StdVsDevStb+CMC+Garrido2008+RF. It achieved significant accuracies for all three binary classification tasks that involve Biperiden, Placebo and Galantamine (accuracies: Galantamine/Placebo = 0.714, Biperiden/Placebo = 0.712, Biperiden/Galantamine = 0.729). We depict the mean and standard error of mean (SEM) over treatment groups of posterior mean estimates of this model for parameters for which the null-hypotheses of an ANOVA test is rejected. We find that all parameters that pass the ANOVA test are extrinsic connection parameters. Six out of seven parameters are extrinsic forward connections. This may hint be a hint that the acetylcholine modulating drugs Biperiden and Galantamine mainly impact forward connections, which is contradictory to our initial hypothesis.
@@ -122,7 +122,7 @@ We evaluated the cross-validated drug label prediction accuracy of most of the 3
 In this section we propose a novel approach for performing inversion of Gaussian Hierarchical Models using Neural Networks. We first review the theory behind variational inference and Hierarchical Gaussian Filter (Mathys et al., 2014). We then look at Variational Autoencoders (Kingma & Welling, 2022), a popular method for generative modelling using Deep Neural Networks. Then we propose our method, building on the theory for Variational Autoencoders and Hierarchical Gaussian Filter. Then we move on to the specific problem of EEG data generative modelling and analyse training performance, network parameters. Finally we use the generative embedding from our model to perform classification on the dataset. For more details regarding the implementation refer to the paper associated with this repository. 
 
 <div align="center">
-<img src="Img/NeuralHGFarchitecture.png" alt="NeuralHGF Architecture" width="40%">
+<img src="Img/NeuralHGFarchitecture.png" alt="NeuralHGF Architecture" width="60%">
 </div>
 
 Now we move on to performing classification on the data. We use the NeuralHGF model to generate embeddings. We then train another Machine Learning model to perform classification based on these generated embeddings. We perform 4-Fold Stratified Cross-validation and report the accuracies for different classification task in the following table. We use the same four classification models as explained above.
@@ -137,10 +137,31 @@ Now we move on to performing classification on the data. We use the NeuralHGF mo
 This modeling technique is inspired by (Tao et al., 2020), (Zhang, Yao, Chen, & Monaghan, 2019), (Kwak, Song, & Kim, 2021). All of the three papers develop a deep neural network (DNN) featuring both convolutional and recurrent layers, as well as attention and self-attention layers to uncover the spatio-temporal dependencies contained in the EEG data. Starting from these examples, we developed a custom DNN architecture to perform the multi-class predictions in the All Drugs task.
 
 <div align="center">
-<img src="Img/CRAMarchitecture.png" alt="NeuralHGF" width="40%">
+<img src="Img/CRAMarchitecture.png" alt="NeuralHGF" width="80%">
 </div>
 
-The pipeline followed by our model and its architecture can be visualized in the figure above. In particular, standard and deviant trials are processed via the same layers, but separately throughout the architecture to be merged via an attention layer right before performing predictions.
+The pipeline followed by our model and its architecture can be visualized in the figure above. In particular, standard and deviant trials are processed via the same layers, but separately throughout the architecture to be merged via an attention layer right before performing predictions. 
+1. Standard and Deviants are defined according to the first approach described in the Pre-Processing section to obtain 106 standard trials and 119 deviant trials.
+2. Standard and deviant trials are averaged to obtain two data sets of shape 149 subjects, 63 channels, 139 samples. From here on, we will discuss only one branch of the architecture as it is equivalent to the other one.
+3. The data set is passed through a Channel-Wise Attention structure made of the following layers: Mean-Pooling, two Fully-Connected (FC) with Tanh activation and Softmax.
+4. The Attention-weighted data are fed to a Convolutional layer with Exponential Linear Unit (ELU) activation then Max-Pooled, Flattened and Dropout. This layer allows to extract the spatial dependencies in the data.
+5. The data set is then fed to a bi-layered LSTM followed by attention. This layer allows to extract the temporal dependencies in the data.
+6. The two branches of the architecture are merged again via concatenation.
+7. Then, attention on the concatenated data is performed.
+8. Finally, the predictions on the five classes are obtained via a FC layer with tanh activation and softmax layer.
+
+The model neurons per layer and hyper-parameters have been optimized in a stratified 10-fold cross-validation setting. The training has been performed for 200 Epochs on NVIDIA T4 Tensor core GPU for a training time of approximately 4-5 hours. We achieved a 10-fold cross-validated accuracy of 0.49 on the All Drugs classification task. Further analysis on the binary classification tasks and permuted-labels model training comparisons have not been performed.
+
+<hr/>
+
+## Results
+We explored a large variety of different modeling techniques. We achieved better classification accuracy than chance for all 6 binary classification tasks. However, we were not able to beat the baseline model for each binary classification task. This may indicate a limitation of the explored models for the modeling of the provided data. One reason might be the small number of samples and the possibly large inter-subject variability. We reckon that the model would have performed better if all drugs would have been administered to all subjects as in the experimental paradigm in (Schöbi et al., 2021). For the 5 class classification we only reach an accuracy that is significantly better than chance with our extra method CRAM. However, this method was not fully evaluated and is is a data-based approach that has not interpretability. Among generative modelling approaches, we achieved the best results with DCM and the best DCM model shows good discriminability for the acetylcholine modulating drugs Biperiden and Galantamine, but not for the Dopamine modulating drugs. We also proposed and implemented a novel approach called NeuralHGF for combining interpretability of HGF with approximation power of neural networks. While this approach may not have given the best results, there is a lot of scope for improvement of architecture and extension to other problem modalities.
+
+A summary of the results is displayed in the following figure: 
+
+<div align="center">
+<img src="Img/recap.png" alt="NeuralHGF" width="60%">
+</div>
 
 
 
