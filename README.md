@@ -205,3 +205,8 @@ neural_hgf_training.m is the script to run to train a new neural net from scratc
 classifier_results.m is script to run to get classifier results on generative embedding from Neural HGF.
 It assumes you have saved models of neural nets (neural_hgf_trained_foldnr_1_of_4 means saved model for fold 1 of 4fold CV). hgf_data_1_4 is processed data for this section (again 1st fold of 4 fold).
 Other csv files are data and results. Other functions are helper functions for constructing the neural network.
+
+<hr/>
+
+## Contact
+Feel free to e-mail etorre@student.ethz.ch.
